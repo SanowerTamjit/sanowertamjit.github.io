@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Broadcast Cricket Overlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pill-bg: rgba(235, 235, 235, 0.98);
+            --center-pill-bg: #0a1435;
+            --score-highlight: #b30000;
+            --accent-green: #14b393;
+            --text-dark: #0a1435;
+            --text-light: #ffffff;
+            --font-main: 'Roboto', sans-serif;
+            --font-display: 'Oswald', sans-serif;
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        /* --- Video Background --- */
+        #bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            filter: brightness(1);
+            object-fit: cover;
+        }
+
+        /* --- Branding Elements --- */
+        .top-left-branding {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .logo-sbit { height: 60px; width: auto; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5)); }
+        .logo-prottasha { height: 45px; width: auto; background: rgba(255,255,255,0.8); padding: 5px 12px; border-radius: 6px; }
+
+        .top-right-branding {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .logo-mpl { height: 130px; filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5)); }
+
+        /* Sponsor - Bottom Right, Above Pill */
+        .sponsor-banner {
+            position: fixed;
+            bottom: 160px;
+            right: 40px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px 20px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 100;
+            animation: slideUp 0.8s var(--transition);
+        }
+
+        .es-live-label {
+            font-weight: 900;
+            font-size: 0.8rem;
+            color: #b30000;
+            text-transform: uppercase;
+            border-right: 2px solid #ccc;
+            padding-right: 15px;
+            font-style: italic;
+        }
+
+        .logo-sponsor { height: 35px; width: auto; }
+
+        /* --- Bottom Overlay Pill - FULL PERCENTAGE WIDTH --- */
+        #broadcast-wrapper {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 98%; /* Fluid width */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #main-pill {
+            width: 100%; /* Spans the wrapper */
+            height: 115px;
+            background: var(--pill-bg);
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.8%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.5);
+            position: relative;
+            transition: all 0.6s var(--transition);
+            overflow: hidden;
+        }
+
+        /* Logos measured by percentage of pill width */
+        .logo-frame {
+            width: 6%; 
+            aspect-ratio: 1/1;
+            min-width: 90px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid #fff;
+            flex-shrink: 0;
+            z-index: 15;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .logo-frame img { width: 85%; height: 85%; object-fit: contain; }
+
+        /* Segment Widths by Percentage */
+        .section-batting {
+            flex: 0 0 22%; /* 22% of total width */
+            padding: 0 1.5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.6s ease;
+        }
+
+        .section-bowling {
+            flex: 0 0 25%; /* 25% of total width */
+            padding: 0 1.5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.6s ease;
+        }
+
+        /* Dynamic state changes for sections */
+        .show-chase .section-bowling {
+            flex: 0 0 0%;
+            padding: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .show-chase .section-batting {
+            flex: 0 0 18%; /* Contract batting to give chase more impact */
+        }
+
+        .batter-row, .bowler-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin: 2px 0;
+            font-style: italic;
+        }
+
+        .striker-marker {
+            width: 0; height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 14px solid var(--accent-green);
+            margin-right: 12px;
+            opacity: 0;
+        }
+
+        .is-striker .striker-marker { opacity: 1; }
+        .is-striker .name { color: #000; }
+
+        .stats { color: #34495e; font-size: 1.5rem; white-space: nowrap; }
+        .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+
+        /* Center Focus Pill - Expansion logic with Percentages */
+        .section-center {
+            height: 100%;
+            background: var(--center-pill-bg);
+            border-radius: 55px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            flex: 0 0 41%; /* 41% base width */
+            position: relative;
+            box-shadow: inset 0 2px 15px rgba(0,0,0,0.6);
+            padding: 0;
+            overflow: hidden;
+            margin: 0 -10px;
+            z-index: 5;
+            transition: all 0.6s var(--transition);
+        }
+
+        .show-chase .section-center {
+            flex: 0 0 70%; /* Expands to 70% of the bar during chase */
+        }
+
+        /* Views */
+        .view-standard {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            padding-top: 8px;
+        }
+
+        .view-chase {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #f0f0f0;
+            display: flex; align-items: center;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .show-chase .view-standard { transform: translateY(-100%); opacity: 0; }
+        .show-chase .view-chase { transform: translateY(0); opacity: 1; }
+
+        /* Chase Content percentages */
+        .chase-need-pill {
+            background: var(--score-highlight);
+            color: #fff;
+            height: 100%;
+            width: 33%; /* 1/3rd of the expanded center pill */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 0 55px 55px 0;
+            box-shadow: 10px 0 25px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        .chase-need-pill .team-name { font-size: 0.95rem; text-transform: uppercase; font-weight: 400; opacity: 0.95; letter-spacing: 1.5px; text-align: center; }
+        .chase-need-pill .need-label { font-size: 3.2rem; font-weight: 900; letter-spacing: 5px; line-height: 1; margin-top: 4px; font-style: italic; }
+
+        .chase-stats {
+            flex: 1;
+            display: flex; align-items: center; justify-content: space-evenly;
+            height: 100%; color: #0a1435;
+        }
+
+        .chase-item { display: flex; align-items: baseline; gap: 15px; border-left: 2px solid rgba(179, 0, 0, 0.2); padding: 0 35px; height: 65%; align-items: center; }
+        .chase-item:first-child { border-left: none; }
+        .chase-val { font-family: var(--font-display); font-size: 4.8rem; font-weight: 700; color: #122550; font-style: italic; }
+        .chase-lbl { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; line-height: 1.1; max-width: 90px; color: #444; }
+
+        /* Info Rotator */
+        .info-ticker-bar {
+            width: 100%; height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: auto;
+        }
+
+        .info-rotator {
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: var(--transition);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .info-rotator.active { opacity: 1; transform: translateY(0); }
+
+        .match-matchup {
+            display: flex; align-items: center; gap: 18px;
+            color: #bdc3c7; font-size: 1.2rem; text-transform: uppercase; font-weight: 700;
+        }
+
+        .match-matchup b { color: #fff; font-size: 1.5rem; font-style: italic; }
+        .match-matchup span { color: var(--accent-green); font-size: 1rem; }
+
+        .score-row { display: flex; align-items: center; gap: 20px; margin-top: 2px; }
+        .score-highlight-box {
+            background: var(--score-highlight);
+            padding: 4px 30px; border-radius: 6px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+        }
+
+        .main-score { font-family: var(--font-display); font-size: 3.8rem; color: #fff; font-weight: 700; line-height: 1; font-style: italic; }
+        .overs-text { font-family: var(--font-display); font-size: 2.6rem; color: #fff; font-weight: 700; font-style: italic; }
+
+        /* Ball Tracking - Percentage Width with Marquee */
+        .ball-viewer { width: 90%; max-width: 400px; overflow: hidden; margin-top: 12px; position: relative; }
+        .recent-over { display: flex; gap: 8px; width: max-content; }
+
+        .marquee-active { animation: bounceScroll 10s ease-in-out infinite alternate; }
+
+        @keyframes bounceScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-100% + 384px)); }
+        }
+
+        .ball-circle {
+            width: 42px; height: 42px;
+            background: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem; font-weight: 700; border: 1px solid #bdc3c7;
+            color: #333; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .ball-wicket { background: #e74c3c; color: #fff; border-color: #c0392b; }
+        .ball-4 { background: var(--accent-green); color: #fff; border-color: #14b393; }
+        .ball-6 { background: #f1c40f; color: #000; border-color: #f39c12; }
+
+        @keyframes slideUp { from { transform: translateY(150px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Video Background -->
+    <video autoplay muted loop id="bg-video1">
+        <source src="./ScreenRecording_01-09-2026 16-02-12_1.MP4" type="video/mp4">
+    </video>
+
+    <!-- Top Branding -->
+    <div class="top-left-branding">
+        <img src="./images/sbit_logo.png" class="logo-sbit" alt="SBIT" onerror="this.style.display='none'">
+        <img src="./images/prottasha_club.png" class="logo-prottasha" alt="Prottasha" onerror="this.style.display='none'">
+    </div>
+
+    <div class="top-right-branding">
+        <img src="./images/mpl.png" class="logo-mpl" alt="MPL S3" onerror="this.style.display='none'">
+    </div>
+
+    <!-- Sponsor (Bottom Right, above ticker) -->
+    <div class="sponsor-banner">
+        <span class="es-live-label">Live Sponsor</span>
+        <img src="./images/live_sponsor.png" class="logo-sponsor" alt="Sponsor" onerror="this.style.display='none'">
+    </div>
+
+    <!-- Score Overlay -->
+    <div id="broadcast-wrapper">
+        <div id="main-pill">
+            <div class="logo-frame">
+                <img id="bat-logo" src="" alt="">
+            </div>
+
+            <div class="section-batting">
+                <div id="bat1" class="batter-row is-striker">
+                    <div style="display: flex; align-items: center; overflow: hidden;">
+                        <div class="striker-marker"></div>
+                        <span class="name">BATTER 1</span>
+                    </div>
+                    <span class="stats">0 (0)</span>
+                </div>
+                <div id="bat2" class="batter-row">
+                    <div style="display: flex; align-items: center; overflow: hidden;">
+                        <div class="striker-marker"></div>
+                        <span class="name">BATTER 2</span>
+                    </div>
+                    <span class="stats">0 (0)</span>
+                </div>
+            </div>
+
+            <div id="center-pill" class="section-center">
+                <div class="view-standard">
+                    <div class="match-matchup">
+                        <b id="team-a-code">TEA</b>
+                        <span>v</span>
+                        <b id="team-b-code">OPP</b>
+                    </div>
+                    <div class="score-row">
+                        <div class="score-highlight-box">
+                            <div id="main-score" class="main-score">0/0</div>
+                        </div>
+                        <div id="main-overs" class="overs-text">0.0</div>
+                    </div>
+                    <div class="info-ticker-bar">
+                        <div id="info-text" class="info-rotator">Match Live</div>
+                    </div>
+                </div>
+
+                <div class="view-chase">
+                    <div class="chase-need-pill">
+                        <div id="chase-bat-team" class="team-name">TEAM</div>
+                        <div class="need-label">NEED</div>
+                    </div>
+                    <div class="chase-stats">
+                        <div class="chase-item">
+                            <span id="chase-runs" class="chase-val">0</span>
+                            <span class="chase-lbl">More From</span>
+                        </div>
+                        <div class="chase-item">
+                            <span id="chase-balls" class="chase-val">0</span>
+                            <span class="chase-lbl">Balls</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bowling-section" class="section-bowling">
+                <div class="bowler-row">
+                    <span id="bowler-name" class="name">BOWLER</span>
+                    <span id="bowler-figs" class="stats">0-0 (0.0)</span>
+                </div>
+                <div class="ball-viewer">
+                    <div id="recent-balls" class="recent-over"></div>
+                </div>
+            </div>
+
+            <div class="logo-frame">
+                <img id="bowl-logo" src="" alt="">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ROTATE_INTERVAL = 5000;
+        let demoIdx = 0, infoIdx = 0, currentMatchData = null, showChaseView = false;
+
+        const getFirstName = (name) => name ? name.trim().split(' ')[0] : '-';
+
+        const generateShortName = (name) => {
+            if (!name) return "???";
+            const words = name.trim().split(' ').filter(w => w.length > 0);
+            if (words.length === 1) return words[0].substring(0, 3).toUpperCase();
+            return (words.slice(0, -1).map(w => w[0]).join('') + " " + words[words.length-1]).toUpperCase();
+        };
+
+        const demoDataStore = [
+            {
+                data: { props: { pageProps: { miniScorecard: { status: true, data: {
+                    status: "live", current_inning: 1, tournament_name: "TARALIA TENNIS LEAGUE", toss_details: "Thunder opt to field",
+                    team_a: { name: "Taralia United", logo: "https://media.cricheroes.in/default/teamintital/TU.png", summary: "8/0", innings: [{ summary: { over: "0.2" } }] },
+                    team_b: { name: "Taralia Thunder", logo: "https://media.cricheroes.in/default/teamintital/TT.png", summary: "Yet to bat" },
+                    batsmen: { sb: { name: "Sojib Mia", runs: 0, balls: 3 }, nsb: { name: "Misbah Munshirhat", runs: 0, balls: 0 } },
+                    bowlers: { sb: { name: "Ashik Munshirhat", runs: 8, wickets: 0, overs: 0.2 } },
+                    recent_over: "0 0wd 0wd 0nb 0wd 0wd 0wd 0wd 0wd",
+                    projected_score: 48
+                }}}}}
+            },
+            {
+                data: { props: { pageProps: { miniScorecard: { status: true, data: {
+                    status: "live", current_inning: 2, tournament_name: "VILLAGE T-20 CUP",
+                    team_a: { name: "Kothi Lions", logo: "https://media.cricheroes.in/team_logo/1643362631559_b2ITYvXrtJk2.jpg" },
+                    team_b: { name: "Keshwan Rising Star", logo: "https://media.cricheroes.in/team_logo/1638122137154_FKlYe1XPUz3R.jpg", summary: "20/1", innings: [{ summary: { over: "2.0" } }] },
+                    batsmen: { sb: { name: "Ravindra Chauhan", runs: 7, balls: 5 }, nsb: { name: "Saiyed Tahir", runs: 6, balls: 6 } },
+                    bowlers: { sb: { name: "Samsu Akuji Member", runs: 11, wickets: 0, overs: 1.0 } },
+                    recent_over: "1 0wd 0 | 1 1 0 4 1 4",
+                    match_summary: { ticker_summary: "Need 63 runs in 108 balls", required_run: 63, required_ball: 108 },
+                    toss_details: "Kothi Lions opt to bat"
+                }}}}}
+            }
+        ];
+
+        async function updateData() {
+            const packet = demoDataStore[demoIdx % demoDataStore.length];
+            demoIdx++;
+            currentMatchData = packet.data.props.pageProps.miniScorecard.data;
+            renderUI();
+        }
+
+        function renderUI() {
+            if (!currentMatchData) return;
+            const m = currentMatchData;
+            const batTeam = m.current_inning === 1 ? m.team_a : m.team_b;
+            const bowlTeam = m.current_inning === 1 ? m.team_b : m.team_a;
+
+            document.getElementById('bat-logo').src = batTeam.logo;
+            document.getElementById('bowl-logo').src = bowlTeam.logo;
+            document.getElementById('team-a-code').innerText = m.team_a.short_name || generateShortName(m.team_a.name);
+            document.getElementById('team-b-code').innerText = m.team_b.short_name || generateShortName(m.team_b.name);
+            document.getElementById('main-score').innerText = batTeam.summary || "0/0";
+            document.getElementById('main-overs').innerText = batTeam.innings?.[0]?.summary?.over || "0.0";
+
+            if (m.current_inning === 2 && m.match_summary) {
+                document.getElementById('chase-bat-team').innerText = batTeam.name.toUpperCase();
+                document.getElementById('chase-runs').innerText = m.match_summary.required_run || '0';
+                document.getElementById('chase-balls').innerText = m.match_summary.required_ball || '0';
+            }
+
+            document.getElementById('bat1').querySelector('.name').innerText = getFirstName(m.batsmen.sb.name).toUpperCase();
+            document.getElementById('bat1').querySelector('.stats').innerText = `${m.batsmen.sb.runs} (${m.batsmen.sb.balls})`;
+            document.getElementById('bat2').querySelector('.name').innerText = getFirstName(m.batsmen.nsb.name).toUpperCase();
+            document.getElementById('bat2').querySelector('.stats').innerText = `${m.batsmen.nsb.runs} (${m.batsmen.nsb.balls})`;
+
+            const bow = m.bowlers.sb;
+            document.getElementById('bowler-name').innerText = getFirstName(bow.name).toUpperCase();
+            document.getElementById('bowler-figs').innerText = `${bow.wickets}-${bow.runs} (${bow.overs})`;
+            
+            const container = document.getElementById('recent-balls');
+            container.innerHTML = '';
+            const balls = m.recent_over.split('|').pop().trim().split(' ').filter(b => b);
+            balls.forEach(val => {
+                const b = document.createElement('div');
+                b.className = 'ball-circle';
+                if (val.includes('W')) b.classList.add('ball-wicket');
+                else if (val === '4') b.classList.add('ball-4');
+                else if (val === '6') b.classList.add('ball-6');
+                b.innerText = val;
+                container.appendChild(b);
+            });
+            balls.length > 8 ? container.classList.add('marquee-active') : container.classList.remove('marquee-active');
+        }
+
+        function rotateInfo() {
+            if (!currentMatchData) return;
+            const info = document.getElementById('info-text');
+            const mainPill = document.getElementById('main-pill');
+            
+            if (currentMatchData.current_inning === 2) {
+                showChaseView = !showChaseView;
+                showChaseView ? mainPill.classList.add('show-chase') : mainPill.classList.remove('show-chase');
+            } else {
+                mainPill.classList.remove('show-chase');
+            }
+
+            const views = [
+                currentMatchData.tournament_name || "Match Live",
+                `Toss: ${currentMatchData.toss_details}`,
+                currentMatchData.current_inning === 1 ? `Projected: ${currentMatchData.projected_score}` : `Target Chase Active`
+            ];
+            info.classList.remove('active');
+            setTimeout(() => {
+                info.innerText = views[infoIdx % views.length];
+                info.classList.add('active');
+                infoIdx++;
+            }, 600);
+        }
+
+        window.onload = () => {
+            updateData();
+            setInterval(updateData, 60000);
+            setInterval(rotateInfo, ROTATE_INTERVAL);
+        };
+    </script>
+</body>
+</html>
