@@ -24,11 +24,11 @@
             font-family: var(--font-main);
             height: 100vh;
             overflow: hidden;
-            background-color: #00000000;
+            background: transparent;
         }
 
         /* --- Video Background --- */
-        #bg-video {
+        /* #bg-video {
             position: fixed;
             right: 0;
             bottom: 0;
@@ -39,56 +39,42 @@
             z-index: -1;
             filter: brightness(1);
             object-fit: cover;
-        }
+        } */
 
         /* --- Branding Elements --- */
         .top-left-branding {
             position: fixed;
-            top: 2vh;
-            left: 2vw;
+            top: 30px;
+            left: 30px;
             display: flex;
             flex-direction: column;
-            gap: 1vh;
+            gap: 10px;
             z-index: 100;
         }
 
-        .logo-sbit { 
-            height: 6vh; 
-            width: auto; 
-            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5)); 
-        }
-        
-        .logo-prottasha { 
-            height: 4.5vh; 
-            width: auto; 
-            background: rgba(255,255,255,0.8); 
-            padding: 0.5vh 1vw; 
-            border-radius: 6px; 
-        }
+        .logo-sbit { height: 60px; width: auto; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5)); }
+        .logo-prottasha { height: 45px; width: auto; background: rgba(255,255,255,0.8); padding: 5px 12px; border-radius: 6px; }
 
         .top-right-branding {
             position: fixed;
-            top: 2vh;
-            right: 2vw;
+            top: 30px;
+            right: 30px;
             z-index: 100;
         }
 
-        .logo-mpl { 
-            height: 13vh; 
-            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5)); 
-        }
+        .logo-mpl { height: 130px; filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5)); }
 
         /* Sponsor - Bottom Right, Above Pill */
         .sponsor-banner {
             position: fixed;
-            bottom: 18vh;
-            right: 3vw;
+            bottom: 160px;
+            right: 40px;
             background: rgba(255, 255, 255, 0.85);
-            padding: 0.8vh 2vw;
+            padding: 8px 20px;
             border-radius: 40px;
             display: flex;
             align-items: center;
-            gap: 1.5vw;
+            gap: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             z-index: 100;
             animation: slideUp 0.8s var(--transition);
@@ -96,36 +82,33 @@
 
         .es-live-label {
             font-weight: 900;
-            font-size: clamp(0.6rem, 0.8vw, 1rem);
+            font-size: 0.8rem;
             color: #b30000;
             text-transform: uppercase;
             border-right: 2px solid #ccc;
-            padding-right: 1.5vw;
+            padding-right: 15px;
             font-style: italic;
         }
 
-        .logo-sponsor { 
-            height: 3.5vh; 
-            width: auto; 
-        }
+        .logo-sponsor { height: 35px; width: auto; }
 
-        /* --- Bottom Overlay Pill - PURE PERCENTAGE WIDTH --- */
+        /* --- Bottom Overlay Pill - FULL PERCENTAGE WIDTH --- */
         #broadcast-wrapper {
             position: fixed;
-            bottom: 3vh;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 98%;
+            width: 98%; /* Fluid width */
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         #main-pill {
-            width: 100%;
-            height: 12vh;
+            width: 100%; /* Spans the wrapper */
+            height: 115px;
             background: var(--pill-bg);
-            border-radius: 6vh;
+            border-radius: 60px;
             display: flex;
             align-items: center;
             padding: 0 0.8%;
@@ -136,10 +119,11 @@
             overflow: hidden;
         }
 
-        /* Logo Frame - Pure Percentage with Aspect Ratio */
+        /* Logos measured by percentage of pill width */
         .logo-frame {
-            width: 6%;
+            width: 6%; 
             aspect-ratio: 1/1;
+            min-width: 90px;
             background: #fff;
             border-radius: 50%;
             display: flex;
@@ -152,15 +136,11 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
 
-        .logo-frame img { 
-            width: 85%; 
-            height: 85%; 
-            object-fit: contain; 
-        }
+        .logo-frame img { width: 85%; height: 85%; object-fit: contain; }
 
-        /* Segment Widths by Percentage - NO MIN-WIDTH */
+        /* Segment Widths by Percentage */
         .section-batting {
-            flex: 0 0 22%;
+            flex: 0 0 22%; /* 22% of total width */
             padding: 0 1.5%;
             display: flex;
             flex-direction: column;
@@ -170,7 +150,7 @@
         }
 
         .section-bowling {
-            flex: 0 0 25%;
+            flex: 0 0 25%; /* 25% of total width */
             padding: 0 1.5%;
             display: flex;
             flex-direction: column;
@@ -188,7 +168,7 @@
         }
 
         .show-chase .section-batting {
-            flex: 0 0 18%;
+            flex: 0 0 18%; /* Contract batting to give chase more impact */
         }
 
         .batter-row, .bowler-row {
@@ -196,317 +176,166 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
-            font-size: clamp(0.8rem, 1.6vh, 2rem);
-            margin: 0.2vh 0;
+            font-size: 1.6rem;
+            margin: 2px 0;
             font-style: italic;
         }
 
         .striker-marker {
-            width: 0; 
-            height: 0;
-            border-top: 0.8vh solid transparent;
-            border-bottom: 0.8vh solid transparent;
-            border-left: 1.4vh solid var(--accent-green);
-            margin-right: 1.2vh;
+            width: 0; height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 14px solid var(--accent-green);
+            margin-right: 12px;
             opacity: 0;
         }
 
         .is-striker .striker-marker { opacity: 1; }
         .is-striker .name { color: #000; }
 
-        .stats { 
-            color: #34495e; 
-            font-size: clamp(0.7rem, 1.5vh, 1.8rem); 
-            white-space: nowrap; 
-        }
-        
-        .name { 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            max-width: 80%;
-        }
+        .stats { color: #34495e; font-size: 1.5rem; white-space: nowrap; }
+        .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
 
-        /* Center Focus Pill - Pure Percentages */
+        /* Center Focus Pill - Expansion logic with Percentages */
         .section-center {
             height: 100%;
             background: var(--center-pill-bg);
-            border-radius: 5.5vh;
+            border-radius: 55px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            flex: 0 0 41%;
+            flex: 0 0 41%; /* 41% base width */
             position: relative;
             box-shadow: inset 0 2px 15px rgba(0,0,0,0.6);
             padding: 0;
             overflow: hidden;
-            margin: 0 -1%;
+            margin: 0 -10px;
             z-index: 5;
             transition: all 0.6s var(--transition);
         }
 
         .show-chase .section-center {
-            flex: 0 0 70%;
+            flex: 0 0 70%; /* Expands to 70% of the bar during chase */
         }
 
         /* Views */
         .view-standard {
-            width: 100%; 
-            height: 100%;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center;
             transition: transform 0.5s ease, opacity 0.5s ease;
-            padding-top: 0.8vh;
+            padding-top: 8px;
         }
 
         .view-chase {
-            position: absolute; 
-            top: 0; 
-            left: 0;
-            width: 100%; 
-            height: 100%;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
             background: #f0f0f0;
-            display: flex; 
-            align-items: center;
+            display: flex; align-items: center;
             transform: translateY(100%);
             opacity: 0;
             transition: transform 0.5s ease, opacity 0.5s ease;
         }
 
-        .show-chase .view-standard { 
-            transform: translateY(-100%); 
-            opacity: 0; 
-        }
-        
-        .show-chase .view-chase { 
-            transform: translateY(0); 
-            opacity: 1; 
-        }
+        .show-chase .view-standard { transform: translateY(-100%); opacity: 0; }
+        .show-chase .view-chase { transform: translateY(0); opacity: 1; }
 
-        /* Chase Content - Pure Percentages */
+        /* Chase Content percentages */
         .chase-need-pill {
             background: var(--score-highlight);
             color: #fff;
             height: 100%;
-            width: 33%;
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center;
-            border-radius: 0 5.5vh 5.5vh 0;
+            width: 33%; /* 1/3rd of the expanded center pill */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 0 55px 55px 0;
             box-shadow: 10px 0 25px rgba(0,0,0,0.3);
             z-index: 2;
         }
-        
-        .chase-need-pill .team-name { 
-            font-size: clamp(0.6rem, 0.95vh, 1.2rem); 
-            text-transform: uppercase; 
-            font-weight: 400; 
-            opacity: 0.95; 
-            letter-spacing: 0.15vh; 
-            text-align: center; 
-        }
-        
-        .chase-need-pill .need-label { 
-            font-size: clamp(1.5rem, 3.2vh, 4rem); 
-            font-weight: 900; 
-            letter-spacing: 0.5vh; 
-            line-height: 1; 
-            margin-top: 0.4vh; 
-            font-style: italic; 
-        }
+        .chase-need-pill .team-name { font-size: 0.95rem; text-transform: uppercase; font-weight: 400; opacity: 0.95; letter-spacing: 1.5px; text-align: center; }
+        .chase-need-pill .need-label { font-size: 3.2rem; font-weight: 900; letter-spacing: 5px; line-height: 1; margin-top: 4px; font-style: italic; }
 
         .chase-stats {
             flex: 1;
-            display: flex; 
-            align-items: center; 
-            justify-content: space-evenly;
-            height: 100%; 
-            color: #0a1435;
+            display: flex; align-items: center; justify-content: space-evenly;
+            height: 100%; color: #0a1435;
         }
 
-        .chase-item { 
-            display: flex; 
-            align-items: baseline; 
-            gap: 1.5vh; 
-            border-left: 2px solid rgba(179, 0, 0, 0.2); 
-            padding: 0 3.5%; 
-            height: 65%; 
-            align-items: center; 
-        }
-        
-        .chase-item:first-child { 
-            border-left: none; 
-        }
-        
-        .chase-val { 
-            font-family: var(--font-display); 
-            font-size: clamp(2rem, 4.8vh, 6rem); 
-            font-weight: 700; 
-            color: #122550; 
-            font-style: italic; 
-        }
-        
-        .chase-lbl { 
-            font-size: clamp(0.7rem, 1.2vh, 1.5rem); 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            line-height: 1.1; 
-            max-width: 20%;
-            color: #444; 
-        }
+        .chase-item { display: flex; align-items: baseline; gap: 15px; border-left: 2px solid rgba(179, 0, 0, 0.2); padding: 0 35px; height: 65%; align-items: center; }
+        .chase-item:first-child { border-left: none; }
+        .chase-val { font-family: var(--font-display); font-size: 4.8rem; font-weight: 700; color: #122550; font-style: italic; }
+        .chase-lbl { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; line-height: 1.1; max-width: 90px; color: #444; }
 
-        /* Info Ticker Bar */
+        /* Info Rotator */
         .info-ticker-bar {
-            width: 100%; 
-            height: 3vh;
+            width: 100%; height: 30px;
             background: rgba(0, 0, 0, 0.5);
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             border-top: 1px solid rgba(255,255,255,0.1);
             margin-top: auto;
         }
 
         .info-rotator {
-            font-size: clamp(0.6rem, 0.9vh, 1.1rem);
+            font-size: 0.9rem;
             color: #ffffff;
             text-transform: uppercase;
-            letter-spacing: 0.2vh;
+            letter-spacing: 2px;
             font-weight: 700;
             opacity: 0;
-            transform: translateY(0.5vh);
+            transform: translateY(5px);
             transition: var(--transition);
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
 
-        .info-rotator.active { 
-            opacity: 1; 
-            transform: translateY(0); 
-        }
+        .info-rotator.active { opacity: 1; transform: translateY(0); }
 
         .match-matchup {
-            display: flex; 
-            align-items: center; 
-            gap: 1.8vh;
-            color: #bdc3c7; 
-            font-size: clamp(0.7rem, 1.2vh, 1.5rem); 
-            text-transform: uppercase; 
-            font-weight: 700;
+            display: flex; align-items: center; gap: 18px;
+            color: #bdc3c7; font-size: 1.2rem; text-transform: uppercase; font-weight: 700;
         }
 
-        .match-matchup b { 
-            color: #fff; 
-            font-size: clamp(0.9rem, 1.5vh, 1.8rem); 
-            font-style: italic; 
-        }
-        
-        .match-matchup span { 
-            color: var(--accent-green); 
-            font-size: clamp(0.6rem, 1vh, 1.2rem); 
-        }
+        .match-matchup b { color: #fff; font-size: 1.5rem; font-style: italic; }
+        .match-matchup span { color: var(--accent-green); font-size: 1rem; }
 
-        .score-row { 
-            display: flex; 
-            align-items: center; 
-            gap: 2vh; 
-            margin-top: 0.2vh; 
-        }
-        
+        .score-row { display: flex; align-items: center; gap: 20px; margin-top: 2px; }
         .score-highlight-box {
             background: var(--score-highlight);
-            padding: 0.4vh 3vh; 
-            border-radius: 6px;
+            padding: 4px 30px; border-radius: 6px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
         }
 
-        .main-score { 
-            font-family: var(--font-display); 
-            font-size: clamp(1.8rem, 3.8vh, 5rem); 
-            color: #fff; 
-            font-weight: 700; 
-            line-height: 1; 
-            font-style: italic; 
-        }
-        
-        .overs-text { 
-            font-family: var(--font-display); 
-            font-size: clamp(1.2rem, 2.6vh, 3.5rem); 
-            color: #fff; 
-            font-weight: 700; 
-            font-style: italic; 
-        }
+        .main-score { font-family: var(--font-display); font-size: 3.8rem; color: #fff; font-weight: 700; line-height: 1; font-style: italic; }
+        .overs-text { font-family: var(--font-display); font-size: 2.6rem; color: #fff; font-weight: 700; font-style: italic; }
 
         /* Ball Tracking - Percentage Width with Marquee */
-        .ball-viewer { 
-            width: 90%; 
-            max-width: none;
-            overflow: hidden; 
-            margin-top: 1.2vh; 
-            position: relative; 
-        }
-        
-        .recent-over { 
-            display: flex; 
-            gap: 0.8vh; 
-            width: max-content; 
-        }
+        .ball-viewer { width: 90%; max-width: 400px; overflow: hidden; margin-top: 12px; position: relative; }
+        .recent-over { display: flex; gap: 8px; width: max-content; }
 
-        .marquee-active { 
-            animation: bounceScroll 10s ease-in-out infinite alternate; 
-        }
+        .marquee-active { animation: bounceScroll 10s ease-in-out infinite alternate; }
 
         @keyframes bounceScroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-100% + 90%)); }
+            100% { transform: translateX(calc(-100% + 384px)); }
         }
 
         .ball-circle {
-            width: 4.2vh; 
-            height: 4.2vh;
-            background: #fff; 
-            border-radius: 50%;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            font-size: clamp(0.7rem, 1.15vh, 1.4rem); 
-            font-weight: 700; 
-            border: 1px solid #bdc3c7;
-            color: #333; 
-            flex-shrink: 0; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            width: 42px; height: 42px;
+            background: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem; font-weight: 700; border: 1px solid #bdc3c7;
+            color: #333; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
-        .ball-wicket { 
-            background: #e74c3c; 
-            color: #fff; 
-            border-color: #c0392b; 
-        }
-        
-        .ball-4 { 
-            background: var(--accent-green); 
-            color: #fff; 
-            border-color: #14b393; 
-        }
-        
-        .ball-6 { 
-            background: #f1c40f; 
-            color: #000; 
-            border-color: #f39c12; 
-        }
+        .ball-wicket { background: #e74c3c; color: #fff; border-color: #c0392b; }
+        .ball-4 { background: var(--accent-green); color: #fff; border-color: #14b393; }
+        .ball-6 { background: #f1c40f; color: #000; border-color: #f39c12; }
 
-        @keyframes slideUp { 
-            from { transform: translateY(15vh); opacity: 0; } 
-            to { transform: translateY(0); opacity: 1; } 
-        }
+        @keyframes slideUp { from { transform: translateY(150px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <!-- Dynamic Video Background -->
-    <video autoplay muted loop id="bg-video">
+    <video autoplay muted loop id="bg-video1">
         <source src="./ScreenRecording_01-09-2026 16-02-12_1.MP4" type="video/mp4">
     </video>
 
