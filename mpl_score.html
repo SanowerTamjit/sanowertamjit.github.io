@@ -135,7 +135,7 @@
             border-radius: 6.5vh;
             display: flex;
             align-items: center;
-            padding: 0 1px;
+            padding: 0 1%;
             box-shadow: 0 15px 40px rgba(0,0,0,0.8);
             border: 1px solid rgba(255,255,255,0.5);
             position: relative;
@@ -647,8 +647,6 @@
     </div>
 
     <script>
-        let resizeTimer;
-
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
 
@@ -656,7 +654,6 @@
                 window.location.reload();
             }, 2000);
         });
-
         const ROTATE_INTERVAL = 5000;
         let demoIdx = 0, infoIdx = 0, currentMatchData = null, showChaseView = false;
 
