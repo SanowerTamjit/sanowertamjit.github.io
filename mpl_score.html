@@ -647,9 +647,16 @@
     </div>
 
     <script>
-        // setTimeout(() => {
-        //     window.location.reload();
-        //     }, 4000);
+        let resizeTimer;
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+
+            resizeTimer = setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        });
+
         const ROTATE_INTERVAL = 5000;
         let demoIdx = 0, infoIdx = 0, currentMatchData = null, showChaseView = false;
 
