@@ -60,16 +60,16 @@
         }
 
         .logo-sbit { 
-            height: 5vh; 
-            width: auto; 
+            height: auto; 
+            width: 8vw; 
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); 
         }
         
         .logo-prottasha { 
-            height: 3.8vh; 
-            width: auto; 
+            height: auto; 
+            width: 9vw; 
             background: rgba(255,255,255,0.8); 
-            padding: 0.4vh 0.8vw; 
+            padding: 0.0vh 0.3vw; 
             border-radius: 4px; 
         }
 
@@ -81,7 +81,7 @@
         }
 
         .logo-mpl { 
-            height: 11vh; 
+            height: 12vh; 
             filter: drop-shadow(0 3px 12px rgba(0,0,0,0.5)); 
         }
 
@@ -90,13 +90,13 @@
             position: fixed;
             bottom: 15vh;
             right: 2vw;
-            background: rgba(255, 255, 255, 0.88);
-            padding: 0.6vh 1.5vw;
-            border-radius: 30px;
+            /* background: rgba(255, 255, 255, 0.404); */
+            padding: 0.2vh 0.1vw;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 1.2vw;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.164); */
             z-index: 100;
             animation: slideUp 0.8s var(--transition);
         }
@@ -112,7 +112,7 @@
         }
 
         .logo-sponsor { 
-            height: 3vh; 
+            height: 7vh; 
             width: auto; 
         }
 
@@ -386,7 +386,7 @@
 
         .info-rotator {
             font-size: clamp(0.5rem, 1vh, 0.85rem);
-            color: #ffffff;
+            color: #dcdcdc;
             margin-top: 1px;
             text-transform: uppercase;
             letter-spacing: 0.15vh;
@@ -487,10 +487,10 @@
             justify-content: center;
             font-size: clamp(0.6rem, 1.5vh, 1rem); 
             font-weight: 700; 
-            border: 1px solid #bdc3c7;
+            border: 1px solid #bdc3c795;
             color: #333; 
             flex-shrink: 0; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            /* box-shadow: 0 2px 5px rgba(0,0,0,0.2); */
         }
 
         .ball-wicket { 
@@ -524,7 +524,7 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background: transparent,
+                background: rgba(0,0,0,0.8);
                 color: white;
                 padding: 20px 40px;
                 border-radius: 10px;
@@ -561,8 +561,13 @@
 
     <!-- Sponsor (Bottom Right, above ticker) -->
     <div class="sponsor-banner">
-        <span class="es-live-label">Live Sponsor</span>
+        <!-- <span class="es-live-label">Live Sponsor</span> -->
         <img src="./images/live_sponsor.png" class="logo-sponsor" alt="Sponsor" onerror="this.style.display='none'">
+    </div>
+     <!-- Sponsor (Bottom left, above ticker) -->
+    <div class="sponsor-banner" style="left:2vw; right:auto;">
+        <!-- <span class="es-live-label">Live Sponsor</span> -->
+        <img src="./images/nobi_bhuiyan.png" style="height: 6vh;" class="logo-sponsor" alt="Sponsor" onerror="this.style.display='none'">
     </div>
 
     <!-- Score Overlay -->
@@ -598,7 +603,7 @@
                     </div>
                     <div class="score-row">
                         <div class="score-highlight-box">
-                            <div id="main-score" class="main-score">0/0</div>
+                            <div id="main-score" class="main-score">000/00</div>
                         </div>
                         <div id="main-overs" class="overs-text">0.0</div>
                     </div>
