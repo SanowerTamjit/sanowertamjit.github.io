@@ -1800,6 +1800,7 @@
         let previousRecentOver = null; // Track previous recent_over to prevent duplicate animations
         let previousOverStr = null; // Track previous over string to detect over completion
         let scorecardData = null; // Store scorecard data
+        let miniScorecardData = null; // Track if mini scorecard is visible
         let isShowingScorecard = false; // Track if scorecard is currently showing
         let lastScorecardShown = 0; // Track when scorecard was last shown
         let bowlingAlternateIntervalId = null; // Track bowling section alternation interval
@@ -1991,6 +1992,7 @@
                 // Store scorecard data
                 if (json?.data?.props?.pageProps?.scorecard) {
                     scorecardData = json.data.props.pageProps.scorecard;
+                    miniScorecardData = json.data.props.pageProps.miniScorecard;
                     console.log('Scorecard data stored with', scorecardData.length, 'innings');
                     
                     // Step 1: Show batting scorecard for 12 seconds
@@ -2201,8 +2203,16 @@
                 return;
             }
             
+            let index = 0;
+            if(miniScorecardData.data?.current_inning){
+                index = miniScorecardData.data.current_inning - 1;
+            }
+            else{
+                index = scorecardData.length -1;
+            }
+
             // Show only the CURRENT batting team (last/most recent innings)
-            const currentInnings = scorecardData[scorecardData.length - 1];
+            const currentInnings = scorecardData[index];
             
             if (!currentInnings) {
                 console.warn('No current innings data');
@@ -2264,9 +2274,15 @@
                 console.warn('Scorecard overlay elements not found');
                 return;
             }
-            
+            let index = 0;
+            if(miniScorecardData.data?.current_inning){
+                index = miniScorecardData.data.current_inning - 1;
+            }
+            else{
+                index = scorecardData.length -1;
+            }
             // Show only the CURRENT fielding team (most recent innings bowling data)
-            const currentInnings = scorecardData[scorecardData.length - 1];
+            const currentInnings = scorecardData[index];
            
             
             if (!currentInnings || !currentInnings.bowling) {
