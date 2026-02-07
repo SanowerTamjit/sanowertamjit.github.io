@@ -3511,7 +3511,7 @@
         // WebSocket connection and data handling function
         function connectWebSocket() {
             // const WS_URL = getUrlParam('ws_url') || "ws://96.30.204.165:8080";
-            const WS_URL = getUrlParam('ws_url') || "wss://safer-cutting-usage-bracelet.trycloudflare.com";
+            const WS_URL = getUrlParam('ws_url') || "wss://s.com";
             const matchUrl = getUrlParam('url');
             
             if (!matchUrl) {
@@ -3559,7 +3559,7 @@
                             // Handle scorecard data
                             if (match.url.endsWith('/scorecard')) {
                                 console.log('Processing scorecard data from WebSocket');
-                                processScorecardData(match);
+                                // processScorecardData(match);
                             }
                         });
                     }
